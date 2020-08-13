@@ -1,5 +1,6 @@
 # geometry function
 
+
 def geometry_function(nx, ny):
     l = 0.5
     h = 0.5

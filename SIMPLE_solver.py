@@ -20,14 +20,14 @@ def solve_SIMPLE(nx, ny, re_number_top, re_number_bottom):
     ipcv, jpcv, dx, dy, l, h = geometry_function(nx, ny)
     ipmax = ipcv + 2
     jpmax = jpcv + 2
-    pressure = np.zeros(ipmax, jpmax)
-    p_corr = np.zeros(ipmax, jpmax)
+    pressure = np.zeros((jpmax, ipmax))
+    p_corr = np.zeros((jpmax, ipmax))
     iumax = ipcv + 1
     jumax = jpcv + 2
-    u_vel = np.zeros(iumax, jumax)
+    u_vel = np.zeros((jumax, iumax))
     ivmax = ipcv + 2
     jvmax = jpcv + 1
-    v_vel = np.zeros(ivmax, jvmax)
+    v_vel = np.zeros((jvmax, ivmax))
 
     # define properties
     rho = properties.DENSITY
@@ -46,33 +46,37 @@ def solve_SIMPLE(nx, ny, re_number_top, re_number_bottom):
     w_p = 1.0
 
     iteration = 0
-    u_res = np.ones(800)    # 800 as the limiting iterations
+    u_res = np.ones(800)  # 800 as the limiting iterations
     v_res = np.ones(800)
     p_res = np.ones(800)
 
-    while (u_res[iteration] > 1e-6 and v_res[iteration] > 1e-6 and p_res[iteration] > 1e-5):
-        # compute u-velocity coefficients
+    while (
+        u_res[iteration] > 1e-6 and v_res[iteration] > 1e-6 and p_res[iteration] > 1e-5
+    ):
+        # step-1: compute u-velocity coefficients
         u_coeff = u_vel_coeff(u_vel, v_vel, dx, dy, rho, mu, iumax, jumax)
 
-        # compute u-velocity
+        # step-2: compute u-velocity
         u_vel = u_vel_solve(u_vel, u_coeff, iumax, jumax, w_u, dy, pressure)
 
-        # compute v-velocity coefficients
+        # step-3: compute v-velocity coefficients
         v_coeff = v_vel_coeff(u_vel, v_vel, dx, dy, rho, mu, ivmax, jvmax)
 
-        # compute v-velocity
+        # step-4: compute v-velocity
         v_vel = v_vel_solve(v_vel, v_coeff, ivmax, jvmax, w_v, dx, pressure)
 
-        # compute pressure correction coefficients
+        # step-5: compute pressure correction coefficients
         p_coeff = p_corr_coeff(dx, dy, rho, u_coeff, v_coeff, ipmax, jpmax)
 
-        # solve pressure correction equation
-        pressure, p_corr = p_correction(pressure, p_corr, p_coeff, ipmax, jpmax, dx, dy, w_p, rho, u_vel, v_vel)
+        # step-6: solve pressure correction equation
+        pressure, p_corr = p_correction(
+            pressure, p_corr, p_coeff, ipmax, jpmax, dx, dy, w_p, rho, u_vel, v_vel
+        )
 
-        # solve u-velocity correction equation
+        # step-7: solve u-velocity correction equation
         u_vel = u_vel_correction(u_vel, u_coeff, p_corr, dy)
 
-        # solve v-velocity correction equation
+        # step-8: solve v-velocity correction equation
         v_vel = v_vel_correction(v_vel, v_coeff, p_corr, dx)
 
         # reset pressure correction matrix
@@ -81,7 +85,9 @@ def solve_SIMPLE(nx, ny, re_number_top, re_number_bottom):
         # increase the iteration count
         iteration += 1
 
-        # check for convergence
-        u_res[iteration], v_res[iteration], p_res[iteration] = convergence(u_vel, u_coeff, v_vel, v_coeff, pressure, u_top_ref, dx, dy, rho, l)
+        # step-9: check for convergence
+        u_res[iteration], v_res[iteration], p_res[iteration] = convergence(
+            u_vel, u_coeff, v_vel, v_coeff, pressure, u_top_ref, dx, dy, rho, l
+        )
 
     return u_vel, v_vel, pressure, u_res, v_res, p_res
