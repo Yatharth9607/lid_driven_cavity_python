@@ -14,6 +14,7 @@ def u_vel_solve(u_vel, u_coeff, iumax, jumax, w_u, dy, pressure):
 
     # x-sweep
     A = np.zeros((jumax - 2, 3))
+
     for i in range(1, iumax - 1):
         A[:, 0] = -As_u[:, i - 1]
         A[:, 1] = Ap_u[:, i - 1] / w_u
