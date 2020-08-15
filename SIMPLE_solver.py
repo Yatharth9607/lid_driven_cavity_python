@@ -17,7 +17,7 @@ from lid_driven_cavity_python.convergence import convergence
 
 def solve_SIMPLE(nx, ny, re_number_top, re_number_bottom):
     # call geometry function
-    ipcv, jpcv, dx, dy, l, h = geometry_function(nx, ny)
+    ipcv, jpcv, dx, dy, l, _ = geometry_function(nx, ny)
     ipmax = ipcv + 2
     jpmax = jpcv + 2
     pressure = np.zeros((jpmax, ipmax))
@@ -31,9 +31,9 @@ def solve_SIMPLE(nx, ny, re_number_top, re_number_bottom):
 
     # define properties
     rho = properties.DENSITY
-    k = properties.THERMAL_CONDUCTIVITY
+    # k = properties.THERMAL_CONDUCTIVITY
     mu = properties.VISCOSITY
-    cp = properties.SPECIFIC_HEAT_CAPACITY
+    # cp = properties.SPECIFIC_HEAT_CAPACITY
 
     # set initial conditions
     u_top_ref = re_number_top * mu / (rho * l)
@@ -90,8 +90,5 @@ def solve_SIMPLE(nx, ny, re_number_top, re_number_bottom):
             u_vel, u_coeff, v_vel, v_coeff, pressure, u_top_ref, dx, dy, rho, l
         )
 
-    print(u_vel)
-    print(v_vel)
     print(pressure)
-
     return u_vel, v_vel, pressure, u_res, v_res, p_res

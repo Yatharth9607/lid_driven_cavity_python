@@ -32,9 +32,9 @@ def v_vel_solve(v_vel, v_coeff, ivmax, jvmax, w_v, dx, pressure):
     A = np.zeros((ivmax - 2, 3))
 
     for j in range(1, jvmax - 1):
-        A[:, 0] = -Aw_v[j - 1, :]
+        A[1:, 0] = -Aw_v[j - 1, 1:]
         A[:, 1] = Ap_v[j - 1, :] / w_v
-        A[:, 1] = -Ae_v[j - 1, :]
+        A[:-1, 2] = -Ae_v[j - 1, :-1]
         b = As_v[j - 1, :] * v_vel[j - 1, 1:-1]
         b = b + An_v[j - 1, :] * v_vel[j + 1, 1:-1]
         b = b + Ap_v[j - 1, :] * v_vel[j, 1:-1] * ((1 - w_v) / w_v)

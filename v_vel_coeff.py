@@ -10,14 +10,14 @@ def v_vel_coeff(u_vel, v_vel, dx, dy, rho, gamma, ivmax, jvmax):
     # calculate physical distance delta_x (size = (jvcv, ivcv)) and delta_y (size = (jvcv, ivcv))
     delta_x = dx * np.ones((jvcv, ivcv))
     delta_y = dy * np.ones((jvcv, ivcv))
-    delta_y[0][:] = 3 * dy / 2
-    delta_y[-1][:] = 3 * dy / 2
+    delta_y[0, :] = 3 * dy / 2
+    delta_y[-1, :] = 3 * dy / 2
 
     # calculate diffusion length del_x (size = (jvcv, ivcv)) and del_y (size = (jvcv, ivcv))
     del_x_w = dx * np.ones((jvcv, ivcv))
-    del_x_w[:][0] = dx / 2
+    del_x_w[:, 0] = dx / 2
     del_x_e = dx * np.ones((jvcv, ivcv))
-    del_x_e[:][-1] = dx / 2
+    del_x_e[:, -1] = dx / 2
     del_y_s = dy * np.ones((jvcv, ivcv))
     del_y_n = dy * np.ones((jvcv, ivcv))
 

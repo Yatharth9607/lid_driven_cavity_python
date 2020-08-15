@@ -9,17 +9,17 @@ def u_vel_coeff(u_vel, v_vel, dx, dy, rho, gamma, iumax, jumax):
 
     # calculate physical distance delta_x (size = (jucv, iucv)) and delta_y (size = (jucv, iucv))
     delta_x = dx * np.ones((jucv, iucv))
-    delta_x[:][0] = 3 * dx / 2
-    delta_x[:][-1] = 3 * dx / 2
+    delta_x[:, 0] = 3 * dx / 2
+    delta_x[:, -1] = 3 * dx / 2
     delta_y = dy * np.ones((jucv, iucv))
 
     # calculate diffusion length del_x (size = (jucv, iucv)) and del_y (size = (jucv, iucv))
     del_x_w = dx * np.ones((jucv, iucv))
     del_x_e = dx * np.ones((jucv, iucv))
     del_y_s = dy * np.ones((jucv, iucv))
-    del_y_s[0][:] = dy / 2
+    del_y_s[0, :] = dy / 2
     del_y_n = dy * np.ones((jucv, iucv))
-    del_y_n[-1][:] = dy / 2
+    del_y_n[-1, :] = dy / 2
 
     # calculate diffusion length array (size = (jucv, iucv))
     Dw = delta_y * gamma / del_x_w
