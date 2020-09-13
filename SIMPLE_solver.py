@@ -46,13 +46,11 @@ def solve_SIMPLE(nx, ny, re_number_top, re_number_bottom):
     w_p = 1.0
 
     iteration = 0
-    u_res = np.ones(800)  # 800 as the limiting iterations
-    v_res = np.ones(800)
-    p_res = np.ones(800)
+    u_res = np.zeros(800)  # 800 as the limiting iterations
+    v_res = np.zeros(800)
+    p_res = np.zeros(800)
 
-    while (
-        u_res[iteration] > 1e-6 and v_res[iteration] > 1e-6 and p_res[iteration] > 1e-5
-    ):
+    while True:
         # step-1: compute u-velocity coefficients
         u_coeff = u_vel_coeff(u_vel, v_vel, dx, dy, rho, mu, iumax, jumax)
 
@@ -82,13 +80,15 @@ def solve_SIMPLE(nx, ny, re_number_top, re_number_bottom):
         # reset pressure correction matrix
         p_corr = np.zeros_like(p_corr)
 
-        # increase the iteration count
-        iteration += 1
-
         # step-9: check for convergence
         u_res[iteration], v_res[iteration], p_res[iteration] = convergence(
             u_vel, u_coeff, v_vel, v_coeff, pressure, u_top_ref, dx, dy, rho, l
         )
+        if not (u_res[iteration] > 1e-6 and v_res[iteration] > 1e-6 and p_res[iteration] > 1e-5):
+            break
 
-    print(pressure)
+        # increase the iteration count
+        iteration += 1
+
+
     return u_vel, v_vel, pressure, u_res, v_res, p_res
